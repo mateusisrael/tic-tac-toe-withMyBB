@@ -50,22 +50,39 @@ function Board () {
       owner: undefined
     }
   ]
-  const [currentOwner, setOwner] = useState(true)
+  const [currentOwner, setOwner] = useState('p1')
   const [winner, setWinner] = useState(undefined)
   const [squares, setSquares] = useState(initialSquareState)
+  const [isDrawed, setIsDrawed] = useState(false)
 
   const handleWinner = (winner) => {
     setWinner(winner)
+  }
+  const handleDraw = () => {
+    setIsDrawed(true)
+  }
+
+  const setCurrentOwner = (currentOwner) => {
+    switch (currentOwner) {
+      case 'p1':
+        return 'p2'
+
+      default:
+        return 'p1'
+    }
   }
 
   const handleSquareClicked = (squareId, ind) => {
     console.log('O quadrado foi clicado', squareId)
 
+    // Ignora toda a função caso o quadrado já esteja clicado
+    if (squares.filter(square => square.id === squareId)[0].isClicked === true) return
+
     const newSquares = squares
     newSquares[ind].isClicked = true
     newSquares[ind].owner = currentOwner
 
-    setOwner(!currentOwner)
+    setOwner(setCurrentOwner(currentOwner))
 
     setSquares([...newSquares])
 
@@ -75,6 +92,8 @@ function Board () {
 
     if (isWinner(positions)) {
       handleWinner(currentOwner)
+    } else if (squares.filter(square => square.isClicked === true).length === 9) {
+      handleDraw()
     }
   }
 
@@ -87,11 +106,15 @@ function Board () {
     ]
 
     for (let i = 0; i < winnablePositions.length; i++) {
-      console.log('T', winnablePositions[i].sort().join(), positions.sort().join())
-      if (winnablePositions[i].sort().join() === positions.sort().join()) {
-        console.log('win')
-        return true
-      }
+      // console.log('T', winnablePositions[i].sort().join(), positions.sort().join())
+
+      // if (winnablePositions[i].sort().join() === positions.sort().join()) {
+      //   console.log('win')
+      //   return true
+      // }
+
+      const a1 = winnablePositions[i].filter((position) => positions.includes(position))
+      if (a1.length === 3) return true
     }
 
     return false
@@ -106,6 +129,7 @@ function Board () {
       }
 
       {winner && <p>{`O jogador ${currentOwner} venceu!!!`}</p>}
+      {isDrawed && <p>O jogo empatou seus nubiii</p>}
     </Container>
   )
 }

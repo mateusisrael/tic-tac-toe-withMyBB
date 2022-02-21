@@ -3,10 +3,10 @@ import { Container } from './styles'
 function Square ({ handleClick, isSelected, owner }) {
   const renderPiece = () => {
     switch (owner) {
-      case true:
+      case 'p1':
         return '🧁'
 
-      case false:
+      case 'p2':
         return '🌺'
 
       default:
